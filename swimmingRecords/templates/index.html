@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游泳记录管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            background: #F0F9FF;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 左侧导航栏 */
+        .sidebar {
+            width: 180px;
+            background: linear-gradient(180deg, #00B4D8 0%, #0096C7 100%);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-section {
+            padding: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .logo-text {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .divider {
+            height: 3px;
+            background: #FFD166;
+            margin: 10px 15px;
+            border-radius: 2px;
+        }
+
+        .nav-buttons {
+            flex: 1;
+            padding: 20px 15px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        .nav-btn.active {
+            background: #FFD166;
+            color: #0077B6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            height: 70px;
+            background: linear-gradient(90deg, #90E0EF 0%, #CAF0F8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: #00B4D8;
+            font-size: 24px;
+        }
+
+        .global-user-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .global-user-selector label {
+            color: #0077B6;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .global-user-selector select {
+            padding: 8px 16px;
+            border: 2px solid #00B4D8;
+            border-radius: 8px;
+            background: white;
+            color: #023E8A;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .page-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 运动类型切换卡 */
+        .sport-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sport-tab {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #90E0EF;
+            border-radius: 8px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sport-tab:hover {
+            border-color: #00B4D8;
+            transform: translateY(-2px);
+        }
+
+        .sport-tab.active {
+            background: #00B4D8;
+            border-color: #00B4D8;
+            color: white;
+        }
+
+        .sport-tab .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .sport-tab .name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0, 180, 216, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: #0077B6;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #90E0EF;
+        }
+
+        /* 表单元素 */
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .form-group label {
+            min-width: 100px;
+            color: #023E8A;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #90E0EF;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #00B4D8;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #00B4D8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0096C7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 180, 216, 0.3);
+        }
+
+        .btn-danger {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #FF5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45B7AA;
+            transform: translateY(-2px);
+        }
+
+        /* 用户列表 */
+        .user-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #90E0EF;
+            border-radius: 8px;
+        }
+
+        .user-item {
+            padding: 15px;
+            border-bottom: 1px solid #90E0EF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s;
+        }
+
+        .user-item:hover {
+            background: #F0F9FF;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-name {
+            font-size: 16px;
+            color: #023E8A;
+            cursor: pointer;
+        }
+
+        .user-name:hover {
+            color: #00B4D8;
+            text-decoration: underline;
+        }
+
+        /* 统计进度条 */
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #023E8A;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #E0F7FA;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00B4D8 0%, #0096C7 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* 打卡记录表格 */
+        .record-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .record-table th {
+            background: #90E0EF;
+            color: #023E8A;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .record-table td {
+            padding: 12px;
+            border-bottom: 1px solid #90E0EF;
+        }
+
+        .record-table tr:hover {
+            background: #F0F9FF;
+        }
+
+        /* 提示消息 */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+
+        .alert-error {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* 单选按钮组 */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            /* 侧边栏改为底部导航 */
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background: linear-gradient(180deg, #00B4D8 0%, #0096C7 100%);
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .logo-section {
+                display: none;
+            }
+
+            .divider {
+                display: none;
+            }
+
+            .nav-buttons {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 8px 10px;
+            }
+
+            .nav-btn {
+                width: auto;
+                flex: 1;
+                margin: 0 4px;
+                padding: 10px 5px;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .nav-btn:hover {
+                transform: none;
+            }
+
+            /* 内容区调整 */
+            .content-area {
+                padding-bottom: 70px;
+            }
+
+            .header {
+                height: auto;
+                min-height: 60px;
+                padding: 12px 15px;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .global-user-selector {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .global-user-selector label {
+                font-size: 13px;
+            }
+
+            .global-user-selector select {
+                flex: 1;
+                padding: 6px 10px;
+                font-size: 13px;
+                min-width: auto;
+            }
+
+            .page-content {
+                padding: 15px;
+            }
+
+            /* 卡片适配 */
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .card-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+
+            /* 表单适配 */
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .form-group label {
+                min-width: auto;
+                font-size: 14px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            /* 运动类型切换卡适配 */
+            .sport-tabs {
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+
+            .sport-tab {
+                padding: 10px;
+            }
+
+            .sport-tab .icon {
+                font-size: 24px;
+                margin-bottom: 4px;
+            }
+
+            .sport-tab .name {
+                font-size: 13px;
+            }
+
+            /* 表格适配 */
+            .record-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .record-table th,
+            .record-table td {
+                padding: 8px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            /* 用户列表适配 */
+            .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .user-name {
+                font-size: 14px;
+            }
+
+            /* 统计进度条适配 */
+            .progress-label {
+                font-size: 13px;
+            }
+
+            .progress-bar {
+                height: 20px;
+            }
+
+            .progress-fill {
+                font-size: 11px;
+            }
+
+            /* 按钮适配 */
+            .btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            /* Canvas图表适配 */
+            #trendChart {
+                width: 100%;
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 左侧导航栏 -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <div class="logo-icon">🏊</div>
+                <div class="logo-text">运动记录</div>
+            </div>
+            <div class="divider"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="switchPage('management')">
+                    👥 人员管理
+                </button>
+                <button class="nav-btn" onclick="switchPage('checkin')">
+                    ✅ 打卡
+                </button>
+                <button class="nav-btn" onclick="switchPage('stats')">
+                    📊 统计
+                </button>
+            </div>
+            <div class="divider"></div>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <div class="header">
+                <h1 id="page-title">🏊 运动记录管理系统</h1>
+                <div class="global-user-selector">
+                    <label>当前用户:</label>
+                    <select id="global-user-select" onchange="switchGlobalUser(this.value)">
+                        <option value="">请选择用户</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <!-- 人员管理页面 -->
+                <div id="management-page" class="page active">
+                    <div class="card">
+                        <div class="card-title">添加用户</div>
+                        <div id="add-user-alert" class="alert"></div>
+                        <div class="form-group">
+                            <label>用户姓名:</label>
+                            <input type="text" id="new-username" placeholder="请输入用户姓名">
+                            <button class="btn btn-primary" onclick="addUser()">添加用户</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">用户列表（点击姓名进行打卡）</div>
+                        <div id="user-list" class="user-list">
+                            <p style="text-align: center; padding: 40px; color: #999;">暂无用户</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 打卡页面 -->
+                <div id="checkin-page" class="page">
+                    <!-- 运动类型切换卡 -->
+                    <div class="sport-tabs">
+                        <div class="sport-tab active" onclick="switchSport('swimming')" id="tab-swimming">
+                            <div class="icon">🏊</div>
+                            <div class="name">游泳</div>
+                        </div>
+                        <div class="sport-tab" onclick="switchSport('fitness')" id="tab-fitness">
+                            <div class="icon">🏋️</div>
+                            <div class="name">健身</div>
+                        </div>
+                        <div class="sport-tab" onclick="switchSport('running')" id="tab-running">
+                            <div class="icon">🏃</div>
+                            <div class="name">跑步</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">打卡信息</div>
+                        <div id="checkin-alert" class="alert"></div>
+                        <div class="form-group">
+                            <label>选择日期:</label>
+                            <input type="date" id="checkin-date">
+                        </div>
+                        
+                        <!-- 游泳表单 -->
+                        <div id="swimming-form">
+                            <div class="form-group">
+                                <label>课程类型:</label>
+                                <select id="swimming-sub-type">
+                                    <option value="">请选择</option>
+                                    <option value="私教课">私教课</option>
+                                    <option value="次卡">次卡</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>泳种:</label>
+                                <select id="swimming-type">
+                                    <option value="">请选择</option>
+                                    <option value="自由泳">自由泳</option>
+                                    <option value="蛙泳">蛙泳</option>
+                                    <option value="仰泳">仰泳</option>
+                                    <option value="蝶泳">蝶泳</option>
+                                    <option value="混合泳">混合泳</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>游泳时长(分钟):</label>
+                                <input type="number" id="swimming-duration" min="0" placeholder="请输入时长">
+                            </div>
+                            <div class="form-group">
+                                <label>游泳距离(米):</label>
+                                <input type="number" id="swimming-distance" min="0" placeholder="请输入距离">
+                            </div>
+                        </div>
+
+                        <!-- 健身表单 -->
+                        <div id="fitness-form" style="display: none;">
+                            <div class="form-group">
+                                <label>训练类别:</label>
+                                <select id="fitness-category" onchange="updateFitnessSubCategory()">
+                                    <option value="">请选择</option>
+                                    <option value="strength">力量训练</option>
+                                    <option value="cardio">有氧运动</option>
+                                    <option value="hiit">HIIT高强度间歇</option>
+                                    <option value="yoga">瑜伽</option>
+                                    <option value="pilates">普拉提</option>
+                                    <option value="stretch">拉伸放松</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="body-part-group" style="display: none;">
+                                <label>训练部位:</label>
+                                <select id="fitness-body-part" onchange="updateFitnessExercises()">
+                                    <option value="">请选择训练部位</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>训练动作:</label>
+                                <select id="fitness-type">
+                                    <option value="">请先选择训练类别</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>训练时长(分钟):</label>
+                                <input type="number" id="fitness-duration" min="0" placeholder="请输入时长">
+                            </div>
+                            <div class="form-group">
+                                <label>备注:</label>
+                                <textarea id="fitness-notes" placeholder="组数、重量、感受等"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 跑步表单 -->
+                        <div id="running-form" style="display: none;">
+                            <div class="form-group">
+                                <label>跑步类型:</label>
+                                <select id="running-type">
+                                    <option value="">请选择</option>
+                                    <option value="慢跑">慢跑</option>
+                                    <option value="快跑">快跑</option>
+                                    <option value="间歇跑">间歇跑</option>
+                                    <option value="马拉松训练">马拉松训练</option>
+                                    <option value="越野跑">越野跑</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>跑步时长(分钟):</label>
+                                <input type="number" id="running-duration" min="0" placeholder="请输入时长">
+                            </div>
+                            <div class="form-group">
+                                <label>跑步距离(公里):</label>
+                                <input type="number" id="running-distance" min="0" step="0.1" placeholder="请输入距离">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success" onclick="addRecord()" style="width: 100%; margin-top: 10px;">
+                            确认打卡
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">历史打卡记录</div>
+                        <table class="record-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>运动类型</th>
+                                    <th>课程类型</th>
+                                    <th>分类</th>
+                                    <th>时长</th>
+                                    <th>距离</th>
+                                    <th>备注</th>
+                                    <th>打卡时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="record-list">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; color: #999; padding: 40px;">暂无记录</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 统计页面 -->
+                <div id="stats-page" class="page">
+                    <!-- 运动类型切换卡 -->
+                    <div class="sport-tabs">
+                        <div class="sport-tab active" onclick="switchStatsSport('all')" id="stats-tab-all">
+                            <div class="icon">📊</div>
+                            <div class="name">全部</div>
+                        </div>
+                        <div class="sport-tab" onclick="switchStatsSport('swimming')" id="stats-tab-swimming">
+                            <div class="icon">🏊</div>
+                            <div class="name">游泳</div>
+                        </div>
+                        <div class="sport-tab" onclick="switchStatsSport('fitness')" id="stats-tab-fitness">
+                            <div class="icon">🏋️</div>
+                            <div class="name">健身</div>
+                        </div>
+                        <div class="sport-tab" onclick="switchStatsSport('running')" id="stats-tab-running">
+                            <div class="icon">🏃</div>
+                            <div class="name">跑步</div>
+                        </div>
+                    </div>
+
+                    <!-- 时间范围选择 -->
+                    <div class="card">
+                        <div class="card-title">时间范围</div>
+                        <div class="sport-tabs" style="margin-bottom: 0;">
+                            <div class="sport-tab active" onclick="switchTimeRange('week')" id="time-week">
+                                <div class="name">本周</div>
+                            </div>
+                            <div class="sport-tab" onclick="switchTimeRange('month')" id="time-month">
+                                <div class="name">本月</div>
+                            </div>
+                            <div class="sport-tab" onclick="switchTimeRange('year')" id="time-year">
+                                <div class="name">今年</div>
+                            </div>
+                            <div class="sport-tab" onclick="switchTimeRange('all')" id="time-all">
+                                <div class="name">全部</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">课时设置 - <span id="settings-sport-name">游泳</span></div>
+                        <div id="settings-alert" class="alert"></div>
+                        <div class="form-group">
+                            <label>总课时数:</label>
+                            <input type="number" id="total-classes" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>私教课次数:</label>
+                            <input type="number" id="private-classes" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>次卡次数:</label>
+                            <input type="number" id="card-classes" min="0" value="0">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">运动统计 - <span id="stats-sport-name">游泳</span></div>
+                        <div id="stats-content" style="display: none;">
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>总打卡次数</span>
+                                    <span id="total-count-text">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="total-count-bar" style="width: 0%;">0</div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>总运动时长</span>
+                                    <span id="total-duration-text">0分钟</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="total-duration-bar" style="width: 0%;">0分钟</div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>总运动距离</span>
+                                    <span id="total-distance-text">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="total-distance-bar" style="width: 0%;">0</div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>私教课次数</span>
+                                    <span id="private-count-text">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="private-count-bar" style="width: 0%; background: #FFD166; color: #0077B6;">0</div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>次卡次数</span>
+                                    <span id="card-count-text">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="card-count-bar" style="width: 0%; background: #4ECDC4;">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="no-stats" style="text-align: center; padding: 40px; color: #999;">
+                            请选择用户查看统计信息
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">项目分类统计</div>
+                        <div id="sub-type-stats" style="display: none;">
+                            <div id="sub-type-list"></div>
+                        </div>
+                        <div id="no-sub-type-stats" style="text-align: center; padding: 40px; color: #999;">
+                            暂无详细统计
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">趋势分析</div>
+                        <div id="trend-chart-container" style="display: none;">
+                            <!-- 趋势图将使用Canvas绘制 -->
+                            <canvas id="trendChart" width="800" height="300" style="width: 100%; border: 1px solid #90E0EF; border-radius: 8px;"></canvas>
+                            <div id="trend-analysis" style="margin-top: 20px; padding: 15px; background: #F0F9FF; border-radius: 8px;">
+                                <div style="font-weight: bold; color: #0077B6; margin-bottom: 10px;">📈 趋势分析</div>
+                                <div id="trend-content"></div>
+                            </div>
+                        </div>
+                        <div id="no-trend-data" style="text-align: center; padding: 40px; color: #999;">
+                            暂无趋势数据
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 提前声明所有函数，确保在 HTML 解析时可用
+        
+        // 全局变量
+        let currentUser = null;
+        let currentSport = 'swimming';
+        let currentStatsSport = 'all';  // 统计页面的运动类型
+        let currentTimeRange = 'week';  // 当前时间范围
+
+        // 运动类型配置
+        const sportConfig = {
+            swimming: {
+                name: '游泳',
+                icon: '🏊',
+                durationLabel: '游泳时长(分钟)',
+                distanceLabel: '游泳距离(米)'
+            },
+            fitness: {
+                name: '健身',
+                icon: '🏋️',
+                durationLabel: '训练时长(分钟)',
+                distanceLabel: null
+            },
+            running: {
+                name: '跑步',
+                icon: '🏃',
+                durationLabel: '跑步时长(分钟)',
+                distanceLabel: '跑步距离(公里)'
+            }
+        };
+
+        // 健身动作库 - 按训练类别和部位分类
+        const fitnessExercises = {
+            strength: {
+                chest: [
+                    '卧推', '上斜卧推', '下斜卧推', '哑铃飞鸟', '蝴蝶机夹胸', '俯卧撑', '双杠臂屈伸', '绳索夹胸', '哑铃上斜飞鸟'
+                ],
+                back: [
+                    '引体向上', '高位下拉', '坐姿划船', '硬拉', '杠铃划船', '哑铃划船', 'T杠划船', '单臂哑铃划船', '直臂下压'
+                ],
+                shoulder: [
+                    '坐姿哑铃推举', '站姿哑铃推举', '杠铃推举', '侧平举', '前平举', '俯身飞鸟', '绳索面拉', '阿诺德推举', '直立划船'
+                ],
+                arms: [
+                    '哑铃弯举', '杠铃弯举', '锤式弯举', '牧师凳弯举', '绳索下压', '仰卧臂屈伸', '窄距卧推', '双杠臂屈伸', '集中弯举'
+                ],
+                legs: [
+                    '深蹲', '腿举', '腿屈伸', '腿弯举', '罗马尼亚硬拉', '箭步蹲', '保加利亚分腿蹲', '提踵', '臀桥'
+                ],
+                core: [
+                    '卷腹', '平板支撑', '俄罗斯转体', '悬垂举腿', 'V字起身', '仰卧抬腿', '自行车卷腹', '侧平板支撑', '健腹轮'
+                ]
+            },
+            cardio: [
+                '跑步机', '椭圆机', '动感单车', '划船机', '跳绳', '爬楼梯', '游泳', '拳击', '搏击操'
+            ],
+            hiit: ['Tabata训练', '高强度间歇跑', '循环训练', '波比跳', '登山跑', '开合跳'],
+            yoga: ['流瑜伽', '阿斯汤加', '阴瑜伽', '哈他瑜伽', '力量瑜伽', '热瑜伽'],
+            pilates: ['垫上普拉提', '器械普拉提', '核心床训练'],
+            stretch: ['全身拉伸', '静态拉伸', '动态拉伸', '泡沫轴放松', '筋膜球放松'],
+            other: ['康复训练', '功能性训练', '其他']
+        };
+
+        // 训练部位中文名称映射
+        const bodyPartNames = {
+            chest: '胸部训练',
+            back: '背部训练',
+            shoulder: '肩部训练',
+            arms: '手臂训练',
+            legs: '腿部训练',
+            core: '核心训练'
+        };
+
+        // 更新训练部位列表
+        function updateFitnessSubCategory() {
+            const category = document.getElementById('fitness-category').value;
+            const bodyPartGroup = document.getElementById('body-part-group');
+            const bodyPartSelect = document.getElementById('fitness-body-part');
+            const exerciseSelect = document.getElementById('fitness-type');
+            
+            // 重置训练动作下拉框
+            exerciseSelect.innerHTML = '<option value="">请先选择训练部位</option>';
+            
+            // 只有力量训练才显示训练部位选择
+            if (category === 'strength') {
+                bodyPartGroup.style.display = 'flex';
+                bodyPartSelect.innerHTML = '<option value="">请选择训练部位</option>';
+                
+                // 添加所有训练部位选项
+                Object.keys(fitnessExercises.strength).forEach(part => {
+                    const option = document.createElement('option');
+                    option.value = part;
+                    option.textContent = bodyPartNames[part];
+                    bodyPartSelect.appendChild(option);
+                });
+            } else if (category) {
+                // 其他训练类别直接显示动作列表
+                bodyPartGroup.style.display = 'none';
+                updateExercisesForCategory(category);
+            } else {
+                bodyPartGroup.style.display = 'none';
+                exerciseSelect.innerHTML = '<option value="">请先选择训练类别</option>';
+            }
+        }
+
+        // 根据类别更新动作列表
+        function updateExercisesForCategory(category) {
+            const exerciseSelect = document.getElementById('fitness-type');
+            exerciseSelect.innerHTML = '<option value="">请选择训练动作</option>';
+            
+            if (fitnessExercises[category] && Array.isArray(fitnessExercises[category])) {
+                fitnessExercises[category].forEach(exercise => {
+                    const option = document.createElement('option');
+                    option.value = exercise;
+                    option.textContent = exercise;
+                    exerciseSelect.appendChild(option);
+                });
+            }
+        }
+
+        // 更新健身动作列表（根据训练部位）
+        function updateFitnessExercises() {
+            const category = document.getElementById('fitness-category').value;
+            const bodyPart = document.getElementById('fitness-body-part').value;
+            
+            if (category === 'strength' && bodyPart) {
+                const exerciseSelect = document.getElementById('fitness-type');
+                exerciseSelect.innerHTML = '<option value="">请选择训练动作</option>';
+                
+                if (fitnessExercises.strength[bodyPart]) {
+                    fitnessExercises.strength[bodyPart].forEach(exercise => {
+                        const option = document.createElement('option');
+                        option.value = exercise;
+                        option.textContent = exercise;
+                        exerciseSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        // 切换页面
+        function switchPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            // 显示目标页面
+            document.getElementById(page + '-page').classList.add('active');
+            
+            // 更新按钮状态
+            const btnIndex = { 'management': 0, 'checkin': 1, 'stats': 2 }[page];
+            document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
+
+            // 更新标题
+            const titles = {
+                'management': '👥 人员管理',
+                'checkin': '✅ 打卡记录',
+                'stats': '📊 统计信息'
+            };
+            document.getElementById('page-title').textContent = titles[page];
+
+            // 加载数据
+            if (page === 'management') {
+                loadUsers();
+            } else if (page === 'checkin') {
+                if (currentUser) {
+                    loadRecords(currentUser);
+                }
+            } else if (page === 'stats') {
+                if (currentUser) {
+                    loadStats();
+                }
+            }
+        }
+
+        // 切换运动类型
+        function switchSport(sport) {
+            currentSport = sport;
+            
+            // 更新标签页样式
+            document.querySelectorAll('.sport-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${sport}`).classList.add('active');
+            
+            // 显示对应表单
+            document.getElementById('swimming-form').style.display = sport === 'swimming' ? 'block' : 'none';
+            document.getElementById('fitness-form').style.display = sport === 'fitness' ? 'block' : 'none';
+            document.getElementById('running-form').style.display = sport === 'running' ? 'block' : 'none';
+        }
+
+        // 切换统计页面的运动类型
+        function switchStatsSport(sport) {
+            currentStatsSport = sport;
+            
+            // 更新标签页样式
+            document.querySelectorAll('#stats-page .sport-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`stats-tab-${sport}`).classList.add('active');
+            
+            // 更新标题显示
+            const sportNames = {
+                'all': '全部',
+                'swimming': '游泳',
+                'fitness': '健身',
+                'running': '跑步'
+            };
+            document.getElementById('settings-sport-name').textContent = sportNames[sport];
+            document.getElementById('stats-sport-name').textContent = sportNames[sport];
+            
+            // 重新加载统计和设置
+            loadStats();
+        }
+
+        // 切换时间范围
+        function switchTimeRange(range) {
+            currentTimeRange = range;
+            
+            // 更新标签页样式
+            document.querySelectorAll('#time-week, #time-month, #time-year, #time-all').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`time-${range}`).classList.add('active');
+            
+            // 重新加载统计
+            loadStats();
+        }
+
+        // 显示提示消息
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        // ==================== 人员管理 ====================
+
+        // 加载用户列表
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const userList = document.getElementById('user-list');
+                    
+                    if (data.data.length === 0) {
+                        userList.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">暂无用户</p>';
+                    } else {
+                        userList.innerHTML = data.data.map(user => `
+                            <div class="user-item">
+                                <span class="user-name" onclick="goToCheckin('${user}')">${user}</span>
+                                <button class="btn btn-danger" onclick="deleteUser('${user}')">删除</button>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+            }
+        }
+
+        // 添加用户
+        async function addUser() {
+            const username = document.getElementById('new-username').value.trim();
+            
+            if (!username) {
+                showAlert('add-user-alert', '请输入用户姓名', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('add-user-alert', data.message, 'success');
+                    document.getElementById('new-username').value = '';
+                    loadUsers();
+                } else {
+                    showAlert('add-user-alert', data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('add-user-alert', '添加用户失败', 'error');
+            }
+        }
+
+        // 删除用户
+        async function deleteUser(username) {
+            if (!confirm(`确定要删除用户 '${username}' 吗？\n此操作将删除该用户的所有打卡记录。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${username}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('add-user-alert', data.message, 'success');
+                    loadUsers();
+                } else {
+                    showAlert('add-user-alert', data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('add-user-alert', '删除用户失败', 'error');
+            }
+        }
+
+        // 跳转到打卡页面
+        function goToCheckin(username) {
+            switchGlobalUser(username);
+            document.getElementById('checkin-date').value = new Date().toISOString().split('T')[0];
+            switchPage('checkin');
+            loadRecords(username);
+        }
+
+        // 全局用户切换
+        function switchGlobalUser(username) {
+            if (username) {
+                currentUser = username;
+                document.getElementById('global-user-select').value = username;
+                
+                // 如果在打卡页面，加载记录
+                if (document.getElementById('checkin-page').classList.contains('active')) {
+                    loadRecords(username);
+                }
+                // 如果在统计页面，加载统计
+                else if (document.getElementById('stats-page').classList.contains('active')) {
+                    loadStats();
+                }
+            } else {
+                currentUser = null;
+            }
+        }
+
+        // 加载全局用户列表
+        async function loadGlobalUsers() {
+            try {
+                const response = await fetch('/api/users');
+                const data = await response.json();
+
+                if (data.success) {
+                    const select = document.getElementById('global-user-select');
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">请选择用户</option>' +
+                        data.data.map(user => `<option value="${user}">${user}</option>`).join('');
+                    
+                    // 保持当前选择
+                    if (currentValue && data.data.includes(currentValue)) {
+                        select.value = currentValue;
+                    }
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+            }
+        }
+
+        // ==================== 打卡功能 ====================
+
+        // 添加打卡记录
+        async function addRecord() {
+            if (!currentUser) {
+                showAlert('checkin-alert', '请先选择用户', 'error');
+                return;
+            }
+
+            const date = document.getElementById('checkin-date').value;
+
+            if (!date) {
+                showAlert('checkin-alert', '请选择日期', 'error');
+                return;
+            }
+
+            let subType = null;
+            let duration = null;
+            let distance = null;
+            let notes = null;
+            let classType = null;  // 课程类型（私教课/次卡）
+
+            // 根据运动类型获取数据
+            if (currentSport === 'swimming') {
+                classType = document.getElementById('swimming-sub-type').value;
+                subType = document.getElementById('swimming-type').value;
+                duration = document.getElementById('swimming-duration').value;
+                distance = document.getElementById('swimming-distance').value;
+            } else if (currentSport === 'fitness') {
+                subType = document.getElementById('fitness-type').value;
+                duration = document.getElementById('fitness-duration').value;
+                notes = document.getElementById('fitness-notes').value;
+            } else if (currentSport === 'running') {
+                subType = document.getElementById('running-type').value;
+                duration = document.getElementById('running-duration').value;
+                distance = document.getElementById('running-distance').value;
+            }
+
+            try {
+                const response = await fetch('/api/records', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        date: date,
+                        sport_type: currentSport,
+                        sub_type: subType || null,
+                        class_type: classType || null,
+                        duration: duration ? parseInt(duration) : null,
+                        distance: distance ? parseFloat(distance) : null,
+                        notes: notes || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('checkin-alert', data.message, 'success');
+                    // 清空表单
+                    clearCurrentForm();
+                    loadRecords(currentUser);
+                } else {
+                    showAlert('checkin-alert', data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('checkin-alert', '打卡失败', 'error');
+            }
+        }
+
+        // 清空当前表单
+        function clearCurrentForm() {
+            if (currentSport === 'swimming') {
+                document.getElementById('swimming-sub-type').value = '';
+                document.getElementById('swimming-type').value = '';
+                document.getElementById('swimming-duration').value = '';
+                document.getElementById('swimming-distance').value = '';
+            } else if (currentSport === 'fitness') {
+                document.getElementById('fitness-type').value = '';
+                document.getElementById('fitness-duration').value = '';
+                document.getElementById('fitness-notes').value = '';
+            } else if (currentSport === 'running') {
+                document.getElementById('running-type').value = '';
+                document.getElementById('running-duration').value = '';
+                document.getElementById('running-distance').value = '';
+            }
+        }
+
+        // 加载打卡记录
+        async function loadRecords(username) {
+            try {
+                const response = await fetch(`/api/records/${username}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const recordList = document.getElementById('record-list');
+                    
+                    if (data.data.length === 0) {
+                        recordList.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #999; padding: 40px;">暂无记录</td></tr>';
+                    } else {
+                        recordList.innerHTML = data.data.map(record => {
+                            const sportNames = {
+                                'swimming': '🏊 游泳',
+                                'fitness': '🏋️ 健身',
+                                'running': '🏃 跑步'
+                            };
+                            const sportName = sportNames[record.sport_type] || record.sport_type;
+                            const classTypeText = record.class_type || '-';
+                            const subTypeText = record.sub_type || '-';
+                            const durationText = record.duration ? `${record.duration}分钟` : '-';
+                            const distanceText = record.distance ? `${record.distance}${record.sport_type === 'running' ? '公里' : '米'}` : '-';
+                            const notesText = record.notes || '-';
+                            return `
+                                <tr>
+                                    <td>${record.date}</td>
+                                    <td>${sportName}</td>
+                                    <td>${classTypeText}</td>
+                                    <td>${subTypeText}</td>
+                                    <td>${durationText}</td>
+                                    <td>${distanceText}</td>
+                                    <td>${notesText}</td>
+                                    <td>${record.timestamp || ''}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('加载打卡记录失败:', error);
+            }
+        }
+
+        // ==================== 统计功能 ====================
+
+        // 加载统计页面的用户列表（保留用于兼容，现在使用全局用户选择）
+        async function loadStatsUsers() {
+            loadGlobalUsers();
+        }
+
+        // 加载统计数据
+        async function loadStats() {
+            const username = currentUser || document.getElementById('global-user-select').value;
+            
+            if (!username) {
+                return;
+            }
+
+            try {
+                // 构建URL，添加sport_type和time_range参数
+                let url = `/api/stats/${username}?time_range=${currentTimeRange}`;
+                if (currentStatsSport !== 'all') {
+                    url += `&sport_type=${currentStatsSport}`;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.data;
+                    
+                    // 显示统计内容
+                    document.getElementById('stats-content').style.display = 'block';
+                    document.getElementById('no-stats').style.display = 'none';
+
+                    // 填充对应运动类型的设置输入框
+                    const sportSettings = stats.settings[currentStatsSport] || {
+                        total_classes: 0,
+                        private_classes: 0,
+                        card_classes: 0
+                    };
+                    
+                    document.getElementById('total-classes').value = sportSettings.total_classes;
+                    document.getElementById('private-classes').value = sportSettings.private_classes;
+                    document.getElementById('card-classes').value = sportSettings.card_classes;
+
+                    // 如果是'全部'，隐藏课时设置
+                    const settingsCard = document.querySelector('#stats-page .card:nth-child(3)');
+                    if (currentStatsSport === 'all') {
+                        settingsCard.style.display = 'none';
+                    } else {
+                        settingsCard.style.display = 'block';
+                    }
+
+                    // 更新统计信息
+                    updateStatsDisplay(stats);
+                    
+                    // 更新子类型统计
+                    updateSubTypeStats(stats.sub_type_stats);
+                    
+                    // 更新趋势图
+                    updateTrendChart(stats.trend_data);
+                }
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 更新统计显示
+        function updateStatsDisplay(stats) {
+            // 总打卡次数
+            document.getElementById('total-count-text').textContent = stats.total_count;
+            document.getElementById('total-count-bar').textContent = stats.total_count;
+            
+            // 总运动时长
+            const duration = stats.total_duration || 0;
+            document.getElementById('total-duration-text').textContent = `${duration}分钟`;
+            document.getElementById('total-duration-bar').textContent = `${duration}分钟`;
+            
+            // 总运动距离
+            const distance = stats.total_distance || 0;
+            const distanceUnit = currentStatsSport === 'running' ? '公里' : '米';
+            document.getElementById('total-distance-text').textContent = `${distance}${distanceUnit}`;
+            document.getElementById('total-distance-bar').textContent = `${distance}${distanceUnit}`;
+            
+            // 私教课次数
+            const privateCount = stats.private_count || 0;
+            document.getElementById('private-count-text').textContent = privateCount;
+            document.getElementById('private-count-bar').textContent = privateCount;
+            
+            // 次卡次数
+            const cardCount = stats.card_count || 0;
+            document.getElementById('card-count-text').textContent = cardCount;
+            document.getElementById('card-count-bar').textContent = cardCount;
+        }
+
+        // 更新子类型统计
+        function updateSubTypeStats(subTypeStats) {
+            const subTypeList = document.getElementById('sub-type-list');
+            
+            if (!subTypeStats || Object.keys(subTypeStats).length === 0) {
+                document.getElementById('sub-type-stats').style.display = 'none';
+                document.getElementById('no-sub-type-stats').style.display = 'block';
+                return;
+            }
+            
+            // 按次数排序
+            const sortedStats = Object.entries(subTypeStats).sort((a, b) => b[1] - a[1]);
+            
+            subTypeList.innerHTML = sortedStats.map(([subType, count]) => `
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>${subType}</span>
+                        <span>${count}次</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${Math.min(count * 10, 100)}%;">${count}次</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 更新趋势图
+        function updateTrendChart(trendData) {
+            const chartContainer = document.getElementById('trend-chart-container');
+            const noTrendData = document.getElementById('no-trend-data');
+            const trendContent = document.getElementById('trend-content');
+            
+            if (!trendData || !trendData.dates || trendData.dates.length === 0) {
+                chartContainer.style.display = 'none';
+                noTrendData.style.display = 'block';
+                return;
+            }
+            
+            chartContainer.style.display = 'block';
+            noTrendData.style.display = 'none';
+            
+            // 绘制多曲线折线图
+            drawTrendChart(trendData);
+            
+            // 计算同比和环比（使用所有series的总和）
+            let totalData = [];
+            trendData.dates.forEach((date, index) => {
+                let totalCount = 0;
+                trendData.series.forEach(series => {
+                    totalCount += series.data[index].count;
+                });
+                totalData.push({date: date, count: totalCount});
+            });
+            
+            if (totalData.length > 0) {
+                const analysis = calculateTrendAnalysis(totalData);
+                trendContent.innerHTML = analysis;
+            }
+        }
+
+        // 绘制趋势图（使用Canvas）- 柱状图
+        function drawTrendChart(trendData) {
+            const canvas = document.getElementById('trendChart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+            
+            // 设置边距
+            const padding = { top: 40, right: 120, bottom: 60, left: 60 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+            
+            // 颜色配置
+            const colors = {
+                '私教课': '#FFD166',
+                '次卡': '#4ECDC4',
+                '其他': '#95A5A6'
+            };
+            
+            // 获取所有日期
+            const dates = trendData.dates;
+            const maxYTick = 4;
+            
+            // 绘制坐标轴
+            ctx.strokeStyle = '#90E0EF';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, padding.top);
+            ctx.lineTo(padding.left, height - padding.bottom);
+            ctx.lineTo(width - padding.right, height - padding.bottom);
+            ctx.stroke();
+            
+            // 绘制Y轴刻度（0, 1, 2, 3, 4）
+            ctx.fillStyle = '#023E8A';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            const yTicks = [0, 1, 2, 3, 4];
+            for (let i = 0; i < yTicks.length; i++) {
+                const y = padding.top + chartHeight - (i / maxYTick) * chartHeight;
+                const value = yTicks[i];
+                ctx.fillText(value, padding.left - 10, y + 4);
+                
+                // 网格线
+                ctx.strokeStyle = '#E0F7FA';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(width - padding.right, y);
+                ctx.stroke();
+            }
+            
+            // 绘制X轴日期标签
+            ctx.fillStyle = '#023E8A';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            dates.forEach((date, index) => {
+                const x = padding.left + (index / (dates.length - 1 || 1)) * chartWidth;
+                ctx.save();
+                ctx.translate(x, height - padding.bottom + 15);
+                ctx.rotate(Math.PI / 4);
+                ctx.fillText(date.substring(5), 0, 0);
+                ctx.restore();
+            });
+            
+            // 计算柱状图宽度
+            const seriesCount = trendData.series.length;
+            const barGroupWidth = chartWidth / dates.length;
+            const barWidth = Math.min(barGroupWidth * 0.6 / seriesCount, 30);
+            const barSpacing = 2;
+            
+            // 绘制柱状图
+            dates.forEach((date, dateIndex) => {
+                const groupX = padding.left + (dateIndex / dates.length) * chartWidth + barGroupWidth / 2;
+                
+                trendData.series.forEach((series, seriesIndex) => {
+                    const point = series.data[dateIndex];
+                    const color = colors[series.name] || '#00B4D8';
+                    
+                    if (point.count > 0) {
+                        const barHeight = (point.count / maxYTick) * chartHeight;
+                        const barX = groupX - (seriesCount * (barWidth + barSpacing)) / 2 + seriesIndex * (barWidth + barSpacing);
+                        const barY = padding.top + chartHeight - barHeight;
+                        
+                        // 绘制柱子
+                        ctx.fillStyle = color;
+                        ctx.fillRect(barX, barY, barWidth, barHeight);
+                        
+                        // 柱子边框
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(barX, barY, barWidth, barHeight);
+                        
+                        // 绘制数值
+                        ctx.fillStyle = color;
+                        ctx.font = 'bold 11px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(point.count, barX + barWidth / 2, barY - 5);
+                    }
+                });
+            });
+            
+            // 绘制标题和图例
+            ctx.font = 'bold 14px Arial';
+            ctx.fillStyle = '#0077B6';
+            ctx.textAlign = 'left';
+            ctx.fillText('打卡次数趋势', padding.left + 10, 25);
+            
+            const legendX = width - padding.right + 10;
+            let legendY = padding.top + 20;
+            
+            ctx.font = '12px Arial';
+            trendData.series.forEach(series => {
+                const color = colors[series.name] || '#00B4D8';
+                
+                // 颜色块
+                ctx.fillStyle = color;
+                ctx.fillRect(legendX, legendY - 8, 15, 15);
+                
+                // 文字
+                ctx.fillStyle = '#023E8A';
+                ctx.textAlign = 'left';
+                ctx.fillText(series.name, legendX + 20, legendY + 3);
+                
+                legendY += 25;
+            });
+        }
+
+        // 计算趋势分析
+        function calculateTrendAnalysis(data) {
+            if (data.length < 2) {
+                return '<div style="color: #999;">数据不足，无法进行趋势分析</div>';
+            }
+            
+            // 计算环比（与上一时期相比）
+            const currentPeriod = data.slice(Math.floor(data.length / 2));
+            const previousPeriod = data.slice(0, Math.floor(data.length / 2));
+            
+            const currentTotal = currentPeriod.reduce((sum, d) => sum + d.count, 0);
+            const previousTotal = previousPeriod.reduce((sum, d) => sum + d.count, 0);
+            
+            const momChange = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal * 100).toFixed(1) : 0;
+            
+            // 计算趋势方向
+            const recentData = data.slice(-3);
+            const isIncreasing = recentData.length >= 2 && recentData[recentData.length - 1].count > recentData[0].count;
+            
+            return `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="padding: 10px; background: white; border-radius: 6px;">
+                        <div style="color: #999; font-size: 12px;">环比变化</div>
+                        <div style="font-size: 20px; font-weight: bold; color: ${momChange >= 0 ? '#4ECDC4' : '#FF6B6B'}; margin-top: 5px;">
+                            ${momChange >= 0 ? '↑' : '↓'} ${Math.abs(momChange)}%
+                        </div>
+                    </div>
+                    <div style="padding: 10px; background: white; border-radius: 6px;">
+                        <div style="color: #999; font-size: 12px;">当前趋势</div>
+                        <div style="font-size: 20px; font-weight: bold; color: ${isIncreasing ? '#4ECDC4' : '#FF6B6B'}; margin-top: 5px;">
+                            ${isIncreasing ? '📈 上升' : '📉 下降'}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 6px;">
+                    <div style="color: #999; font-size: 12px;">总打卡次数</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #0077B6; margin-top: 5px;">${currentTotal + previousTotal}次</div>
+                    <div style="color: #666; font-size: 12px; margin-top: 5px;">
+                        前半个周期: ${previousTotal}次 | 后半个周期: ${currentTotal}次
+                    </div>
+                </div>
+            `;
+        }
+
+        // 自动计算总课时
+        function calculateTotalClasses() {
+            const privateClasses = parseInt(document.getElementById('private-classes').value) || 0;
+            const cardClasses = parseInt(document.getElementById('card-classes').value) || 0;
+            const totalClasses = privateClasses + cardClasses;
+            document.getElementById('total-classes').value = totalClasses;
+        }
+
+        // 保存设置
+        async function saveSettings() {
+            const username = document.getElementById('stats-user-select').value;
+            
+            if (!username) {
+                showAlert('settings-alert', '请先选择用户', 'error');
+                return;
+            }
+            
+            if (currentStatsSport === 'all') {
+                showAlert('settings-alert', '请选择具体的运动类型进行设置', 'error');
+                return;
+            }
+
+            const settings = {
+                sport_type: currentStatsSport,
+                total_classes: parseInt(document.getElementById('total-classes').value) || 0,
+                private_classes: parseInt(document.getElementById('private-classes').value) || 0,
+                card_classes: parseInt(document.getElementById('card-classes').value) || 0
+            };
+
+            try {
+                const response = await fetch(`/api/settings/${username}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('settings-alert', data.message, 'success');
+                    loadStats();
+                } else {
+                    showAlert('settings-alert', data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('settings-alert', '保存设置失败', 'error');
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期
+            document.getElementById('checkin-date').value = new Date().toISOString().split('T')[0];
+            loadUsers();
+            loadGlobalUsers();
+            
+            // 监听私教课和次卡输入框的变化，自动计算总课时
+            document.getElementById('private-classes').addEventListener('input', calculateTotalClasses);
+            document.getElementById('card-classes').addEventListener('input', calculateTotalClasses);
+        });
+    </script>
+</body>
+</html>

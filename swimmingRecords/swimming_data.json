@@ -1,0 +1,289 @@
+{
+  "users": {
+    "孟佳杰": {
+      "records": [
+        {
+          "date": "2026-04-14",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 19:41:42",
+          "sub_type": "蛙泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 1000
+        },
+        {
+          "date": "2026-03-15",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:50:00",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-16",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:53:55",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-17",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:54:43",
+          "sub_type": "蛙泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-20",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:55:01",
+          "sub_type": "蛙泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-21",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:55:16",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-23",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:55:40",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-27",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:55:53",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-29",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:56:09",
+          "sub_type": "蛙泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-04-03",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:56:29",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-04-05",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:56:47",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-04-06",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:57:11",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 300
+        },
+        {
+          "date": "2026-04-09",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:57:30",
+          "sub_type": "蛙泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 300
+        },
+        {
+          "date": "2026-04-11",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:57:48",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 500
+        },
+        {
+          "date": "2026-04-12",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 22:58:01",
+          "sub_type": "蛙泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 500
+        }
+      ],
+      "settings": {
+        "swimming": {
+          "total_classes": 44,
+          "private_classes": 24,
+          "card_classes": 20
+        },
+        "fitness": {
+          "total_classes": 0,
+          "private_classes": 0,
+          "card_classes": 0
+        },
+        "running": {
+          "total_classes": 0,
+          "private_classes": 0,
+          "card_classes": 0
+        }
+      }
+    },
+    "柘雅馨": {
+      "records": [
+        {
+          "date": "2026-03-15",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:02:27",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-16",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:02:43",
+          "sub_type": "自由泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-17",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:02:55",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-20",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:03:09",
+          "sub_type": "自由泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-21",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:03:21",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-27",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:03:33",
+          "sub_type": "自由泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-28",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:03:44",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-03-29",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:03:57",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-04-06",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:04:10",
+          "sub_type": "自由泳",
+          "class_type": "次卡",
+          "duration": 60,
+          "distance": 200
+        },
+        {
+          "date": "2026-04-09",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:05:10",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 500
+        },
+        {
+          "date": "2026-04-12",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:05:26",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 1000
+        },
+        {
+          "date": "2026-04-14",
+          "sport_type": "swimming",
+          "timestamp": "2026-04-14 23:05:40",
+          "sub_type": "自由泳",
+          "class_type": "私教课",
+          "duration": 60,
+          "distance": 1000
+        }
+      ],
+      "settings": {
+        "swimming": {
+          "total_classes": 39,
+          "private_classes": 19,
+          "card_classes": 20
+        },
+        "fitness": {
+          "total_classes": 0,
+          "private_classes": 0,
+          "card_classes": 0
+        },
+        "running": {
+          "total_classes": 0,
+          "private_classes": 0,
+          "card_classes": 0
+        }
+      }
+    }
+  }
+}
